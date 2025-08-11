@@ -15,6 +15,13 @@ import { useAppSelector, useAppDispatch } from '../../store/hooks'
 import { updateObject, removeObject } from '../../store/slices/document'
 import { useTheme, useMediaQuery } from '@mui/material'
 
+declare module 'fabric' {
+  interface Object {
+    id?: string
+  }
+}
+
+
 const CanvasEditor = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const fabricCanvasRef = useRef<fabric.Canvas | null>(null)
