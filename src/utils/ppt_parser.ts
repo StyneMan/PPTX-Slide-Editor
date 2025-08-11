@@ -195,11 +195,6 @@ async function parseSlide(xml: string, zip: JSZip, slidePath: string): Promise<S
         //     '*|ext'
         // ]) : null;
 
-        console.log("TYPE :: ", type);
-        console.log("XFRM :: ", xfrm);
-        console.log("OFF :: ", off);
-        console.log("EXT :: ", ext);
-
         const x = emuToPixels(parseInt(off?.getAttribute('x') || '0'));
         const y = emuToPixels(parseInt(off?.getAttribute('y') || '0'));
         const width = emuToPixels(parseInt(ext?.getAttribute('cx') || '0'));
@@ -235,7 +230,14 @@ async function parseSlide(xml: string, zip: JSZip, slidePath: string): Promise<S
                     text: text.trim(),
                     position,
                     rotation,
-                    style,
+                    style: {
+                        fontFamily: style.fontFamily,
+                        fontSize: style.fontSize,
+                        fontWeight: style.fontWeight,
+                        textAlign: style.textAlign as 'left' | 'center' | 'right', // Type assertion
+                        color: style.color,
+                        fill: style.fill
+                    },
                 });
             } else {
                 // Shape
@@ -267,7 +269,7 @@ async function parseSlide(xml: string, zip: JSZip, slidePath: string): Promise<S
         } else if (type === 'pic') {
             // Image - use the actual parseImage function
             try {
-                const imageObj = await parseImage(shape, zip, slidePath);
+                const imageObj = await parseImage(shape, zip, slidePath, position, size, rotation);
                 if (imageObj) {
                     objects.push({
                         type: 'image',
@@ -343,7 +345,10 @@ function parseShapeStyle(shape: Element) {
 async function parseImage(
     picElement: Element,
     zip: JSZip,
-    slidePath: string
+    slidePath: string,
+    position,
+    size,
+    rotation
 ): Promise<Image | null> {
     const blip = picElement.querySelector('a\\:blip');
     const embedId = blip?.getAttribute('r:embed');
@@ -362,6 +367,7 @@ async function parseImage(
     const imagePath = relationship?.getAttribute('Target');
     if (!imagePath) return null;
 
+
     // Get the image file
     const fullImagePath = `ppt/${imagePath}`;
     const imageFile = zip.file(fullImagePath);
@@ -372,10 +378,16 @@ async function parseImage(
     const extension = imagePath.split('.').pop()?.toLowerCase();
     const mimeType = extension === 'jpg' ? 'image/jpeg' : `image/${extension}`;
 
+    // const rotation = parseInt(xfrm?.getAttribute('rot') || '0');
+
     return {
         type: 'image',
         src: `data:${mimeType};base64,${imageData}`,
-        // ... other properties
+        id: embedId,
+        position,
+        size,
+        rotation: rotation,
+        style: {}
     };
 }
 

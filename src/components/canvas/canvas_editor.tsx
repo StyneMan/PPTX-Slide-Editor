@@ -152,29 +152,29 @@ const CanvasEditor = () => {
               fill: obj.style.color,
               backgroundColor: obj.style.fill
             })
-            break;
+            break
 
-          case 'image':
-            return new Promise<void>(imgResolve => {
-              fabric.FabricImage.fromURL(
-                obj.src,
-                img => {
-                  img.set({
-                    left: obj.position.x,
-                    top: obj.position.y,
-                    scaleX: obj.size.width / img.width!,
-                    scaleY: obj.size.height / img.height!,
-                    angle: obj.rotation || 0
-                  })
-                  img.id = obj.id
-                  canvas.add(img)
-                  imgResolve()
-                },
-                {
-                  crossOrigin: 'anonymous' // Important for some image loading
-                }
-              )
-            })
+          case 'image': {
+            const loadImage = async () => {
+              const img = await new Promise<fabric.Image>(() => {
+                fabric.Image.fromURL(obj.src, {
+                  crossOrigin: 'anonymous'
+                })
+              })
+
+              img.set({
+                left: obj.position.x,
+                top: obj.position.y,
+                scaleX: obj.size.width / (img.width || 1),
+                scaleY: obj.size.height / (img.height || 1),
+                angle: obj.rotation || 0
+              });
+              (img as fabric.Image & { id: string }).id = obj.id
+              canvas.add(img)
+            }
+
+            return loadImage()
+          }
 
           case 'rectangle':
             fabricObj = new fabric.Rect({
@@ -275,7 +275,7 @@ const CanvasEditor = () => {
   return (
     <Box
       ref={containerRef}
-      bgcolor={"transparent"}
+      bgcolor={'transparent'}
       sx={{
         border: '1px solid #ccc',
         borderRadius: 1,

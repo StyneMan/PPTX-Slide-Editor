@@ -38,40 +38,42 @@ History tracking for undo/redo
 Serialization to/from JSON
 
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Trade-offs
+### Limited Format Support:
+Focusing on basic shapes/text/images to meet core requirements
 
-## Expanding the ESLint configuration
+Advanced PPTX features (animations, complex gradients) will be ignored
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+### Font Handling:
+Will use system fallbacks rather than embedded fonts
 
-```js
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+Text measurements may not be pixel-perfect
 
-      // Remove tseslint.configs.recommended and replace with this
-      ...tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      ...tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      ...tseslint.configs.stylisticTypeChecked,
+### Performance:
+Complex slides may render slower than server-side solutions
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+Will implement canvas virtualization for large decks
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
 
+## If Given More Time
+### Enhanced Features:
+Ungroup/regroup functionality
+
+Basic shape formatting controls
+
+Improved text editing with style controls
+
+### Performance Optimizations:
+Lazy loading of slides
+
+Canvas caching for better rendering performance
+
+
+
+Github repository [link](https://github.com/StyneMan/PPTX-Slide-Editor) 
+
+Production [demo](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+ 
+### By Stanley Nyekpeye
+
+LinkedIn [@Stanley Nyekpeye](https://www.linkedin.com/in/stanley-nyekpeye-03a456194/) 
